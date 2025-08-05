@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -15,6 +16,10 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 
+/**
+ * Flutter plugin for handling deep links and app links.
+ * Supports both Android v1 and v2 embedding.
+ */
 public class UniLinksPlugin
         implements FlutterPlugin,
                 MethodChannel.MethodCallHandler,
@@ -25,36 +30,41 @@ public class UniLinksPlugin
     private static final String MESSAGES_CHANNEL = "uni_links/messages";
     private static final String EVENTS_CHANNEL = "uni_links/events";
 
+    @Nullable
     private BroadcastReceiver changeReceiver;
 
+    @Nullable
     private String initialLink;
+    
+    @Nullable
     private String latestLink;
+    
+    @Nullable
     private Context context;
+    
     private boolean initialIntent = true;
 
-    private void handleIntent(Context context, Intent intent) {
+    private void handleIntent(@NonNull Context context, @NonNull Intent intent) {
         String action = intent.getAction();
         String dataString = intent.getDataString();
 
-        if (Intent.ACTION_VIEW.equals(action)) {
+        if (Intent.ACTION_VIEW.equals(action) && dataString != null) {
             if (initialIntent) {
                 initialLink = dataString;
                 initialIntent = false;
             }
             latestLink = dataString;
-            if (changeReceiver != null) changeReceiver.onReceive(context, intent);
+            if (changeReceiver != null) {
+                changeReceiver.onReceive(context, intent);
+            }
         }
     }
 
     @NonNull
-    private BroadcastReceiver createChangeReceiver(final EventChannel.EventSink events) {
+    private BroadcastReceiver createChangeReceiver(@NonNull final EventChannel.EventSink events) {
         return new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                // NOTE: assuming intent.getAction() is Intent.ACTION_VIEW
-
-                // Log.v("uni_links", String.format("received action: %s", intent.getAction()));
-
+            public void onReceive(@NonNull Context context, @NonNull Intent intent) {
                 String dataString = intent.getDataString();
 
                 if (dataString == null) {
@@ -72,7 +82,7 @@ public class UniLinksPlugin
         register(flutterPluginBinding.getBinaryMessenger(), this);
     }
 
-    private static void register(BinaryMessenger messenger, UniLinksPlugin plugin) {
+    private static void register(@NonNull BinaryMessenger messenger, @NonNull UniLinksPlugin plugin) {
         final MethodChannel methodChannel = new MethodChannel(messenger, MESSAGES_CHANNEL);
         methodChannel.setMethodCallHandler(plugin);
 
@@ -80,7 +90,11 @@ public class UniLinksPlugin
         eventChannel.setStreamHandler(plugin);
     }
 
-    /** Plugin registration. */
+    /**
+     * Plugin registration for v1 embedding.
+     * @deprecated Use v2 embedding instead
+     */
+    @Deprecated
     public static void registerWith(@NonNull PluginRegistry.Registrar registrar) {
         // Detect if we've been launched in background
         if (registrar.activity() == null) {
@@ -96,39 +110,49 @@ public class UniLinksPlugin
     }
 
     @Override
-    public void onDetachedFromEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {}
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+        this.context = null;
+    }
 
     @Override
-    public void onListen(Object o, EventChannel.EventSink eventSink) {
+    public void onListen(@Nullable Object o, @NonNull EventChannel.EventSink eventSink) {
         changeReceiver = createChangeReceiver(eventSink);
     }
 
     @Override
-    public void onCancel(Object o) {
+    public void onCancel(@Nullable Object o) {
         changeReceiver = null;
     }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        if (call.method.equals("getInitialLink")) {
-            result.success(initialLink);
-        } else if (call.method.equals("getLatestLink")) {
-            result.success(latestLink);
-        } else {
-            result.notImplemented();
+        switch (call.method) {
+            case "getInitialLink":
+                result.success(initialLink);
+                break;
+            case "getLatestLink":
+                result.success(latestLink);
+                break;
+            default:
+                result.notImplemented();
+                break;
         }
     }
 
     @Override
-    public boolean onNewIntent(Intent intent) {
-        this.handleIntent(context, intent);
+    public boolean onNewIntent(@NonNull Intent intent) {
+        if (context != null) {
+            this.handleIntent(context, intent);
+        }
         return false;
     }
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding activityPluginBinding) {
         activityPluginBinding.addOnNewIntentListener(this);
-        this.handleIntent(this.context, activityPluginBinding.getActivity().getIntent());
+        if (context != null) {
+            this.handleIntent(this.context, activityPluginBinding.getActivity().getIntent());
+        }
     }
 
     @Override
@@ -138,7 +162,9 @@ public class UniLinksPlugin
     public void onReattachedToActivityForConfigChanges(
             @NonNull ActivityPluginBinding activityPluginBinding) {
         activityPluginBinding.addOnNewIntentListener(this);
-        this.handleIntent(this.context, activityPluginBinding.getActivity().getIntent());
+        if (context != null) {
+            this.handleIntent(this.context, activityPluginBinding.getActivity().getIntent());
+        }
     }
 
     @Override

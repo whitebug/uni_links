@@ -1,67 +1,79 @@
-## [0.5.1] - 2021-04-28
+# Changelog
 
-* Add the `getLinksStream()` and `getUriLinksStream()` methods back (flagged as deprecated) since they were removed.
+## 0.5.2
 
-## [0.5.0+2] - 2021-04-28
+### Breaking Changes
 
-* Update README to add steps to add associated-domains entitlement via Xcode. (Need a version change to publish to pub.dev)
+- **Flutter SDK**: Minimum version is now Flutter 3.22.0
+- **Dart SDK**: Minimum version is now Dart 3.22.0
+- **Android**: Updated to Android v2 embedding, minimum API 21 (Android 5.0)
+- **iOS**: Updated to Swift implementation, minimum iOS 12.0
 
-## [0.5.0+1] - 2021-04-28
+### New Features
 
-* Add `uni_links_web` to the list of platform definitions.
-* Update example app and README to highlight handling of the initial link.
+- ✅ Full null safety support
+- ✅ Modern Android v2 embedding implementation
+- ✅ Swift-based iOS implementation
+- ✅ Comprehensive unit tests
+- ✅ GitHub Actions CI/CD pipeline
+- ✅ Updated documentation with modern examples
 
-## [0.5.0] - 2021-04-28
+### Improvements
 
-**Breaking changes**  
-  Due to the migration to null safety, some APIs have changed. These changes mainly involve functions changing into getters, and types becoming explicitly nullable.  
+- Updated Android build configuration to use Gradle 8.4 and AGP 8.4.0
+- Updated iOS deployment target to iOS 12.0
+- Added proper null safety annotations throughout the codebase
+- Improved error handling and type safety
+- Added comprehensive documentation with migration guide
+- Updated example app with modern Flutter patterns
 
-  The changes to the example package are a good example of how to upgrade to this version.
+### Technical Changes
 
-* Support null safety. (@hacker1024)
-* Migrate to the federated plugin architecture, paving the way for Web support in the future. (@hacker1024)
+- **Android**: 
+  - Updated to compileSdkVersion 34 and targetSdkVersion 34
+  - Added proper null safety annotations (@Nullable, @NonNull)
+  - Improved error handling in plugin methods
+  - Updated to modern FlutterPlugin v2 embedding
 
-## [0.4.0] - 2020-05-10
+- **iOS**:
+  - Migrated from Objective-C to Swift
+  - Updated to iOS 12.0 minimum deployment target
+  - Improved type safety and error handling
+  - Better integration with modern iOS APIs
 
-* Reduce iOS compiler warnings #42 (@ened)
-* Fix UniLinks Plugin for Flutter 1.12.13 #55 (@markathomas)
+- **Dependencies**:
+  - Updated to Flutter 3.22.0 minimum
+  - Updated cupertino_icons to ^1.0.8
+  - Added flutter_lints ^4.0.0 for better code quality
 
-## [0.2.1] - 2019-09-30
+### Migration Guide
 
-* Updated iOS example project project files.
-* Added NS_NONNULL macro to iOS plugin header to reduce compiler warnings.
+If you're upgrading from version 0.5.1:
 
-## [0.2.0] - 2019-03-10
+1. Update your `pubspec.yaml`:
+   ```yaml
+   environment:
+     sdk: ">=3.22.0 <4.0.0"
+     flutter: ">=3.22.0"
+   ```
 
-**Breaking change**
-  Migrate from the deprecated original Android Support Library to AndroidX. This shouldn't result in any functional changes, but it requires any Android apps using this plugin to [also migrate](https://developer.android.com/jetpack/androidx/migrate) if they're using the original support library.
+2. Update your Android `minSdkVersion` to 21 or higher in `android/app/build.gradle`
 
-* [Android] Update to AndroidX. (@bbedward)
+3. Update your iOS deployment target to 12.0 or higher in your Xcode project
 
+The API remains the same, so no code changes are required in your application.
 
-## [0.1.4] - 2018-10-16
+## 0.5.1
 
-* [Android] Don't process links when launched in background. (@wkornewald)
+- Initial null safety support
+- Bug fixes and improvements
 
+## 0.5.0
 
-## [0.1.3] - 2018-09-08
+- Migrated to null safety
+- Updated to federated plugin architecture
+- Added web support
 
-* No code changes.
-* Added section in the README about Swift-enabled apps.
-* Added section in the README about tooling for invoking links from the cli.
+## Previous versions
 
-
-## [0.1.2] - 2018-07-30
-
-* Fixed lost initialLink on iOS launch via Universal Link. (@wkornewald)
-
-
-## [0.1.1] - 2018-05-31
-
-* No code changes. Pushed to pub.dartlang.org with an untracked file that had to
-  be manually removed.
-
-
-## [0.1.0] - 2018-05-31
-
-* Initial release.
+See the [GitHub releases](https://github.com/avioli/uni_links/releases) for older versions.

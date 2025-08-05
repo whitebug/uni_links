@@ -1,12 +1,7 @@
 #import <Flutter/Flutter.h>
 
-NS_ASSUME_NONNULL_BEGIN
+/// Flutter plugin for handling universal links and custom URL schemes on iOS.
+/// This plugin supports both Universal Links (https) and Custom URL schemes.
+@interface UniLinksPlugin : NSObject <FlutterPlugin, FlutterStreamHandler>
 
-@interface UniLinksPlugin : NSObject <FlutterPlugin>
-+ (instancetype)sharedInstance;
-- (BOOL)application:(UIApplication *)application
-    continueUserActivity:(NSUserActivity *)userActivity
-      restorationHandler:(void (^)(NSArray *_Nullable))restorationHandler;
 @end
-
-NS_ASSUME_NONNULL_END
