@@ -14,7 +14,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry;
 
 /**
  * Flutter plugin for handling deep links and app links.
@@ -89,15 +88,7 @@ public class UniLinksPlugin
         eventChannel.setStreamHandler(plugin);
     }
 
-    /**
-     * Plugin registration method for Flutter embedding v1.
-     * This method is called by the Flutter engine when the plugin is registered.
-     */
-    public static void registerWith(@NonNull PluginRegistry.Registrar registrar) {
-        UniLinksPlugin plugin = new UniLinksPlugin();
-        plugin.context = registrar.context();
-        register(registrar.messenger(), plugin);
-    }
+
 
 
 
