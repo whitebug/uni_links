@@ -58,8 +58,8 @@ import UIKit
     }
 }
 
-// MARK: - UIApplicationDelegate
-extension UniLinksPlugin: UIApplicationDelegate {
+// MARK: - FlutterApplicationLifeCycleDelegate
+extension UniLinksPlugin: FlutterApplicationLifeCycleDelegate {
     
     public func application(
         _ application: UIApplication,
